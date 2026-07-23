@@ -8,6 +8,10 @@ subscription apps.
 The primary product loop is **Observe → Diagnose → Experiment → Learn**. The
 demo workspace is available at `/`; AppClimb authentication starts at `/login`.
 
+The canonical product north star, roadmap, visual principles, and instructions
+for future contributors live in [PRODUCT_DIRECTION.md](./PRODUCT_DIRECTION.md).
+Read it before changing product direction or expanding the feature set.
+
 ## Product surface
 
 - Growth River: Discover → Store → Install → Activate → Paywall → Trial → Paid
