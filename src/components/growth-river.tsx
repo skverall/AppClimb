@@ -77,6 +77,23 @@ export const GrowthRiver = memo(function GrowthRiver({
     [stagePoints],
   );
 
+  // The first confirmed bottleneck is the earliest coral constriction — the
+  // earliest stage classified as critical. Stages arrive in funnel order, so the
+  // first match is the earliest loss. Everything shown here is derived from the
+  // stage data itself; nothing is hardcoded, so an empty or healthy river shows
+  // no bottleneck rather than a fabricated one.
+  const bottleneck = useMemo(() => {
+    const stage = stages.find((candidate) => candidate.health === "critical");
+    if (!stage) {
+      return null;
+    }
+    const pointsBelowBaseline =
+      stage.benchmark != null && stage.conversionRate != null
+        ? (stage.benchmark - stage.conversionRate) * 100
+        : null;
+    return { stage, pointsBelowBaseline };
+  }, [stages]);
+
   return (
     <section className="river-card" aria-labelledby="growth-river-title">
       <div className="section-heading">
@@ -100,7 +117,11 @@ export const GrowthRiver = memo(function GrowthRiver({
           viewBox="0 0 1056 360"
           preserveAspectRatio="none"
           role="img"
-          aria-label="Growth river from discovery to renewal, with a confirmed activation bottleneck"
+          aria-label={
+            bottleneck
+              ? `Growth river from discovery to renewal, with a confirmed ${bottleneck.stage.label.toLowerCase()} bottleneck`
+              : "Growth river from discovery to renewal"
+          }
         >
           <defs>
             <linearGradient id="riverGradient" x1="0%" x2="100%">
@@ -194,13 +215,21 @@ export const GrowthRiver = memo(function GrowthRiver({
           })}
         </div>
 
-        <div className="bottleneck-callout">
-          <span className="bottleneck-dot" />
-          <div>
-            <strong>First confirmed bottleneck</strong>
-            <span>Activation · 16.2 pts below baseline</span>
+        {bottleneck && (
+          <div className="bottleneck-callout">
+            <span className="bottleneck-dot" />
+            <div>
+              <strong>First confirmed bottleneck</strong>
+              <span>
+                {bottleneck.stage.label}
+                {bottleneck.pointsBelowBaseline != null &&
+                bottleneck.pointsBelowBaseline > 0
+                  ? ` · ${bottleneck.pointsBelowBaseline.toFixed(1)} pts below baseline`
+                  : ""}
+              </span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="river-footer">
